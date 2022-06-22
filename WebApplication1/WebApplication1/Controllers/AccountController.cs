@@ -14,11 +14,13 @@ namespace WebApplication1.Controllers
     {
         private UserManager<AppUser> _userManager { get; }
         private SignInManager<AppUser> _signInManager { get; }
+        private RoleManager<AppUser> _roleManager { get; }
         public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager, RoleManager<AppUser> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
         public IActionResult Register()
         {
@@ -70,7 +72,7 @@ namespace WebApplication1.Controllers
             {
                 Email=user.Email
             };
-            var signInResult = await _signInManager.CheckPasswordSignInAsync(newUser, user.Password, lockoutOnFailure: true);
+            var signInResult = await _signInManager.PasswordSignInAsync(userDb.UserName,user.Password,user.isPersistent,lockoutOnFailure: true);
             if (signInResult.IsLockedOut)
             {
                 ModelState.AddModelError("", "Please try a few minutes later");
